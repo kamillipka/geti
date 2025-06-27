@@ -16,6 +16,7 @@ import { Tooltip } from './tooltip.component';
 interface ParametersProps {
     parameters: ConfigurationParameter[];
     onChange: (parameter: ConfigurationParameter) => void;
+    isReadOnly?: boolean;
 }
 
 const ParameterTooltip: FC<{ text: string }> = ({ text }) => {
@@ -27,6 +28,7 @@ interface ParameterProps {
     onChange: (parameter: ConfigurationParameter) => void;
     isDisabled?: boolean;
     marginStart?: string;
+    isReadOnly: boolean;
 }
 
 interface ParameterFieldProps {
@@ -38,7 +40,7 @@ interface ParameterFieldProps {
 interface ParameterLayoutProps {
     header: string;
     description: string;
-    onReset: () => void;
+    onReset?: () => void;
     children: ReactNode;
     marginStart?: string;
 }
@@ -113,7 +115,23 @@ const ParameterField: FC<ParameterFieldProps> = ({ parameter, onChange, isDisabl
     }
 };
 
-export const Parameter = ({ parameter, onChange, isDisabled, marginStart }: ParameterProps) => {
+export const Parameter = ({ parameter, onChange, isDisabled, marginStart, isReadOnly }: ParameterProps) => {
+    if (isReadOnly) {
+        if (isBoolEnableParameter(parameter)) {
+            return (
+                <ParameterLayout header={parameter.name} description={parameter.description} marginStart={marginStart}>
+                    <Text>{parameter.value ? 'On' : 'Off'}</Text>
+                </ParameterLayout>
+            );
+        }
+
+        return (
+            <ParameterLayout header={parameter.name} description={parameter.description} marginStart={marginStart}>
+                <Text>{parameter.value}</Text>
+            </ParameterLayout>
+        );
+    }
+
     const handleReset = () => {
         onChange({ ...parameter, value: parameter.defaultValue } as ConfigurationParameter);
     };
@@ -136,42 +154,34 @@ Parameter.Field = ParameterField;
 interface ParametersListProps {
     parameters: ConfigurationParameter[];
     onChange: (parameter: ConfigurationParameter) => void;
+    isReadOnly: boolean;
 }
 
-const ParametersList = ({ parameters, onChange }: ParametersListProps) => {
+const ParametersList = ({ parameters, onChange, isReadOnly }: ParametersListProps) => {
     if (isBoolEnableParameter(parameters[0])) {
-        return (
-            <ParametersContainer>
-                {parameters.map((parameter, index) => (
-                    <Parameter
-                        key={parameter.name}
-                        parameter={parameter}
-                        onChange={onChange}
-                        isDisabled={index > 0 && !parameters[0].value}
-                        marginStart={index > 0 ? 'size-150' : undefined}
-                    />
-                ))}
-            </ParametersContainer>
-        );
+        return parameters.map((parameter, index) => (
+            <Parameter
+                key={parameter.name}
+                parameter={parameter}
+                onChange={onChange}
+                isDisabled={index > 0 && !parameters[0].value}
+                marginStart={index > 0 ? 'size-150' : undefined}
+                isReadOnly={isReadOnly}
+            />
+        ));
     }
 
-    return parameters.map((parameter) => <Parameter key={parameter.name} parameter={parameter} onChange={onChange} />);
+    return parameters.map((parameter) => (
+        <Parameter key={parameter.name} parameter={parameter} onChange={onChange} isReadOnly={isReadOnly} />
+    ));
 };
 
-const ParametersContainer = ({ children }: { children: ReactNode }) => {
+export const Parameters = ({ parameters, onChange, isReadOnly = false }: ParametersProps) => {
+    const columns = isReadOnly ? ['size-3000', '1fr'] : ['size-3000', minmax('size-3400', '1fr'), 'size-400'];
+
     return (
-        <Grid columns={['size-3000', minmax('size-3400', '1fr'), 'size-400']} gap={'size-300'} alignItems={'center'}>
-            {children}
+        <Grid columns={columns} gap={'size-300'} alignItems={'center'}>
+            <ParametersList parameters={parameters} onChange={onChange} isReadOnly={isReadOnly} />
         </Grid>
     );
 };
-
-export const Parameters = ({ parameters, onChange }: ParametersProps) => {
-    return (
-        <ParametersContainer>
-            <ParametersList parameters={parameters} onChange={onChange} />
-        </ParametersContainer>
-    );
-};
-
-Parameters.Container = ParametersContainer;
