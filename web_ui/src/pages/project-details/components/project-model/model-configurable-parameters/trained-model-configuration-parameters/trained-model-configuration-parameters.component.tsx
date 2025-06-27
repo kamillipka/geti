@@ -1,12 +1,16 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
-import { Item, Loading, TabList, TabPanels, Tabs } from '@geti/ui';
+import { Item, Loading, TabList, TabPanels, Tabs, Text } from '@geti/ui';
 import { isEmpty } from 'lodash-es';
 
 import { useTrainedModelConfigurationQuery } from '../../../../../../core/configurable-parameters/hooks/use-trained-model-configuration.hook';
 import { TrainedModelConfiguration } from '../../../../../../core/configurable-parameters/services/configuration.interface';
 import { useModelIdentifier } from '../../../../../../hooks/use-model-identifier/use-model-identifier.hook';
+import { CustomerSupportLink } from '../../../../../../shared/components/customer-support-link/customer-support-link.component';
+import { NotFound } from '../../../../../../shared/components/not-found/not-found.component';
+import { AdvancedConfigurationParameters } from './advanced-configuration.component';
+import { ModelDataManagementParameters } from './model-data-management-parameters.component';
 import { ModelTrainingParameters } from './model-training-parameters.component';
 
 import styles from './trained-model-configuration-parameters.module.scss';
@@ -20,7 +24,7 @@ const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelCon
         {
             name: 'Data management',
             isVisible: !isEmpty(parameters.datasetPreparation.augmentation),
-            children: <>Data management</>,
+            children: <ModelDataManagementParameters parameters={parameters.datasetPreparation.augmentation} />,
         },
         {
             name: 'Training',
@@ -29,13 +33,16 @@ const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelCon
         },
         {
             name: 'Evaluation',
-            isVisible: !isEmpty(parameters.evaluation),
-            children: <>Evaluation</>,
+            /**
+             * Evaluation tab will be supported in the phase 2.
+             */
+            isVisible: false || !isEmpty(parameters.evaluation),
+            children: undefined,
         },
         {
             name: 'Advanced',
             isVisible: !isEmpty(parameters.advancedConfiguration),
-            children: <>Advanced</>,
+            children: <AdvancedConfigurationParameters parameters={parameters.advancedConfiguration} />,
         },
     ];
 
@@ -50,6 +57,7 @@ const TrainedModelConfigurationParametersList = ({ parameters }: TrainedModelCon
             items={visibleTabs}
             UNSAFE_className={styles.tabs}
             marginTop={'size-100'}
+            height={'100%'}
         >
             <TabList>
                 {(item: TabItem) => (
@@ -77,8 +85,22 @@ export const TrainedModelConfigurationParameters = ({ taskId }: TrainedModelConf
     const { modelId, ...projectIdentifier } = useModelIdentifier();
     const { data, isPending } = useTrainedModelConfigurationQuery(projectIdentifier, { modelId, taskId });
 
-    if (isPending || data === undefined) {
+    if (isPending) {
         return <Loading />;
+    }
+
+    if (data === undefined) {
+        return (
+            <NotFound
+                heading={'Training Parameters Unavailable'}
+                content={
+                    <Text>
+                        The model training parameters could not be loaded. Please try again or contact{' '}
+                        <CustomerSupportLink />.
+                    </Text>
+                }
+            />
+        );
     }
 
     return <TrainedModelConfigurationParametersList parameters={data} />;
