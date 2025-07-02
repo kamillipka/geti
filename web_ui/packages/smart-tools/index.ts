@@ -8,4 +8,12 @@ export { type WatershedInstance, type WatershedPolygon } from './src/watershed/i
 
 export { InferenceImage } from './src/inference-image/inference-image';
 
-export { formatContourToPoints, approximateShape } from './src/utils/utils';
+export {
+    formatContourToPoints,
+    approximateShape,
+    formatImageData,
+    loadSource,
+    concatFloat32Arrays,
+    stackPlanes,
+    isPolygonValid,
+} from './src/utils/utils';
