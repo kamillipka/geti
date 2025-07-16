@@ -1,6 +1,7 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Rect, RotatedRect } from '../shared/interfaces';
 import { highestCorner } from './math';
 import {
     calculateSizeAndPositionBasedOfCornerAnchor,
@@ -9,8 +10,6 @@ import {
     rectToRotatedRect,
     transformPointInRotatedRectToScreenSpace,
 } from './rotated-rect-math';
-import { Rect, RotatedRect } from './shapes.interface';
-import { ShapeType } from './shapetype.enum';
 import * as Vec2 from './vec2';
 
 describe('transformPointInRotatedRectToScreenSpace', () => {
@@ -20,7 +19,7 @@ describe('transformPointInRotatedRectToScreenSpace', () => {
         width: 100,
         height: 100,
         angle: 90,
-        shapeType: ShapeType.RotatedRect,
+        shapeType: 'rotated-rect',
     };
 
     it('does not change position of center', () => {
@@ -43,7 +42,7 @@ describe('calculateSizeAndPositionBasedOnCornerAnchor', () => {
         width: 100,
         height: 100,
         angle: 0,
-        shapeType: ShapeType.RotatedRect,
+        shapeType: 'rotated-rect',
     };
 
     const gap = 10;
@@ -110,7 +109,7 @@ describe('highestCorner', () => {
         width: 100,
         height: 100,
         angle: 0,
-        shapeType: ShapeType.RotatedRect,
+        shapeType: 'rotated-rect',
     };
 
     const testInputs: [number, Vec2.Vec2][] = [
@@ -151,14 +150,14 @@ describe('cursorForDirection', () => {
 describe('rectToRotatedRect', () => {
     test('transforms rect to rotatedRect', () => {
         const rect: Rect = {
-            shapeType: ShapeType.Rect,
+            shapeType: 'rect',
             x: 50,
             y: 80,
             width: 40,
             height: 30,
         };
         expect(rectToRotatedRect(rect)).toEqual({
-            shapeType: ShapeType.RotatedRect,
+            shapeType: 'rotated-rect',
             x: 70,
             y: 95,
             width: 40,

@@ -3,9 +3,10 @@
 
 //  Dependencies get bundled into the worker
 
-import { OpenCVLoader, SegmentAnythingModels } from '@geti/smart-tools';
+import { SegmentAnythingModels } from '@geti/smart-tools';
+import { OpenCVTypes } from '@geti/smart-tools/opencv';
+import { OpenCVLoader } from '@geti/smart-tools/utils';
 import { expose } from 'comlink';
-import type OpenCVTypes from 'OpenCVTypes';
 
 import { AlgorithmType } from '../hooks/use-load-ai-webworker/algorithm.interface';
 import { SegmentAnythingModel } from '../pages/annotator/tools/segment-anything-tool/model/segment-anything';

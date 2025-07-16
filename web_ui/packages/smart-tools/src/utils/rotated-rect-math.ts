@@ -1,9 +1,8 @@
 // Copyright (C) 2022-2025 Intel Corporation
 // LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 
+import { Rect, RotatedRect } from '../shared/interfaces';
 import { rotateDeg } from './math';
-import { Rect, RotatedRect } from './shapes.interface';
-import { ShapeType } from './shapetype.enum';
 import * as Vec2 from './vec2';
 
 export const transformPointInRotatedRectToScreenSpace = (position: Vec2.Vec2, shape: RotatedRect): Vec2.Vec2 => {
@@ -68,7 +67,7 @@ export const rectToRotatedRect = (shape: Rect): RotatedRect => {
         ...shape,
         x: shape.x + shape.width / 2,
         y: shape.y + shape.height / 2,
-        shapeType: ShapeType.RotatedRect,
+        shapeType: 'rotated-rect',
         angle: 0,
     };
 };
