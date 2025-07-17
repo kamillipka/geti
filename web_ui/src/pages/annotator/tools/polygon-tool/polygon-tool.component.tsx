@@ -146,7 +146,7 @@ export const PolygonTool = ({ annotationToolContext }: ToolAnnotationContextProp
     const optimizePolygonOrSegments = async (iPolygon: Polygon): Promise<Polygon> => {
         if (worker) {
             if (mode === PolygonMode.MagneticLasso) {
-                return worker.optimizePolygon(iPolygon);
+                return convertToolShapeToGetiShape(await worker.optimizePolygon(iPolygon));
             }
 
             const lastSegment = differenceWith(iPolygon.points, segments.flat(), isEqual);
