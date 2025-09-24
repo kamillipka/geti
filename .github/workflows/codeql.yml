@@ -16,32 +16,63 @@ on: # zizmor: ignore[cache-poisoning]
 permissions: {} # No permissions by default on workflow level
 
 jobs:
+  check_paths:
+    runs-on: ubuntu-latest
+    outputs:
+      modified_keys: ${{ steps.changed-files-yaml.outputs.modified_keys }}
+    steps:
+      - name: Get all paths that should trigger the workflow
+        id: changed-files-yaml
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46.0.5
+        with:
+          files_yaml: |
+            python:
+              - libs/**
+              - platform/**
+              - docker/**
+              - interactive_ai/**
+            javascript-typescript:
+              - web_ui/**
+            actions:
+              - .github/workflows/**
+            go:
+              - libs/**
+              - interactive_ai/**
+              - platform/**
+
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     permissions:
       security-events: write # required to publish sarif
-
+    needs: check_paths
     strategy:
       fail-fast: false
       matrix:
         include:
           - language: actions
             build-mode: none
+            run: ${{ contains(needs.check_paths.outputs.modified_keys, 'actions') || github.event_name != 'pull_request' }}
           - language: javascript-typescript
             build-mode: none
+            run: ${{ contains(needs.check_paths.outputs.modified_keys, 'javascript-typescript') || github.event_name != 'pull_request' }}
           - language: python
             build-mode: none
+            run: ${{ contains(needs.check_paths.outputs.modified_keys, 'python') || github.event_name != 'pull_request' }}
           - language: go
             build-mode: autobuild
+            run: ${{ contains(needs.check_paths.outputs.modified_keys, 'go') || github.event_name != 'pull_request' }}
 
     steps:
       - name: Harden the runner (audit all outbound calls)
         uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        if: ${{ matrix.run == true }}
         with:
           egress-policy: audit
 
       - name: Free space on runner (delete unnecessary tools)
+        if: ${{ matrix.run == true }}
         shell: bash
         run: |
           echo "Free space before deletion:"
@@ -56,17 +87,20 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        if: ${{ matrix.run == true }}
         with:
           persist-credentials: false
 
       - name: Setup GO
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        if: ${{ matrix.run == true && matrix.language == 'go' }}
         with:
           go-version: "1.23"
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
+        if: ${{ matrix.run == true }}
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
@@ -74,5 +108,6 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
+        if: ${{ matrix.run == true }}
         with:
           category: "/language:${{matrix.language}}"
