@@ -30,7 +30,6 @@ jobs:
             python:
               - libs/**
               - platform/**
-              - docker/**
               - interactive_ai/**
               - dev_tools/**
             javascript-typescript:
