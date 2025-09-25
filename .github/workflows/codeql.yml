@@ -88,7 +88,6 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        if: ${{ matrix.run == true }}
         with:
           persist-credentials: false
 
@@ -112,3 +111,21 @@ jobs:
         if: ${{ matrix.run == true }}
         with:
           category: "/language:${{matrix.language}}"
+
+      - name: Create empty SARIF file
+        if: ${{ matrix.run == false }}
+        run: |
+          cat > empty-results.sarif << EOF
+          {
+            "version": "2.1.0",
+            "\$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+            "runs": []
+          }
+          EOF
+      
+      - name: Upload empty SARIF file
+        if: ${{ matrix.run == false }}
+        uses: github/codeql-action/upload-sarif@f1f6e5f6af878fb37288ce1c627459e94dbf7d01 # v3.30.1
+        with:
+          sarif_file: empty-results.sarif
+          category: "/language:${{ matrix.language }}"
