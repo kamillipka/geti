@@ -32,10 +32,11 @@ jobs:
               - platform/**
               - docker/**
               - interactive_ai/**
+              - dev_tools/**
             javascript-typescript:
               - web_ui/**
             actions:
-              - .github/workflows/**
+              - .github/**
             go:
               - libs/**
               - interactive_ai/**
