@@ -129,3 +129,4 @@ jobs:
         with:
           sarif_file: empty-results.sarif
           category: "/language:${{ matrix.language }}"
+          wait-for-processing: "true"
