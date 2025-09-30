@@ -37,7 +37,7 @@ on:
   repository_dispatch:
     types: [sign-artifacts]
 
-permissions: {}
+permissions: write-all
 
 jobs:
   sign-artifacts:
