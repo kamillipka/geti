@@ -119,7 +119,22 @@ jobs:
           {
             "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
             "version": "2.1.0",
-            "runs": []
+            "runs": [
+               {
+                 "tool": {
+                   "driver": {
+                     "name": "SarifSamples",
+                     "organization": "GitHub",
+                     "version": "2.0.0",
+                     "rules" : [],
+                   }
+                 },
+                 "artifacts" : [],
+                 "results": [],
+                 "properties" : {},
+                 "columnKind": "utf16CodeUnits",
+               }
+            ]
           }
           EOF
       
