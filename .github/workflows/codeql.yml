@@ -134,7 +134,7 @@ jobs:
                 },
                 "artifacts" : [],
                 "results": [],
-                "properties" : {},
+                "properties" : "",
                 "columnKind": "utf16CodeUnits",
               }
             ]
