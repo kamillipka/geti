@@ -33,6 +33,10 @@ on:
         description: "Container image URI (repository, name and tag) (e.g. ghcr.io/open-edge-platform/my-image:latest)"
         required: true
         type: string
+      ref:
+        type: string
+        default: ""
+        required: false
 
   repository_dispatch:
     types: [sign-artifacts]
@@ -50,6 +54,12 @@ jobs:
         uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
         with:
           egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.ref || '' }}
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2
