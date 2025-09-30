@@ -58,7 +58,7 @@ concurrency:
   group: ${{ github.head_ref || github.ref_name }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-permissions: {} # No permissions by default on workflow level
+permissions: write-all # No permissions by default on workflow level
 
 jobs:
   get-vars:
