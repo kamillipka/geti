@@ -49,10 +49,6 @@ on:
         description: "Enable publishing binaries"
         type: boolean
         default: true
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        required: true
-        default: ""
 
 concurrency:
   group: ${{ github.head_ref || github.ref_name }}
@@ -89,7 +85,7 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
           DISPATCH_PUB: ${{ github.event.inputs.publish_binaries }}
-          DISPATCH_REF: ${{ github.event.inputs.ref }}
+          DISPATCH_REF: ${{ github.sha }}
         run: |
 
           is_build_all_event() {
@@ -130,7 +126,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-          ref: ${{ steps.set-vars.outputs.checkout_ref }}
+          ref: ${{ github.sha }}
 
       - name: Prepare build version
         id: prepare-build-version
@@ -177,7 +173,6 @@ jobs:
         component: ${{ fromJSON(needs.get-vars.outputs.libs-list) }}
     with:
       component-dir: ${{ matrix.component }}
-      ref: ${{ needs.get-vars.outputs.checkout_ref }}
 
   component-workflow:
     name: Component workflow
@@ -218,7 +213,6 @@ jobs:
     with:
       build_version: ${{ needs.get-vars.outputs.build_version }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
-      ref: ${{ needs.get-vars.outputs.checkout_ref }}
 
   package-distribution-workflow:
     name: Build platform distribution binaries
