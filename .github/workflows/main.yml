@@ -173,7 +173,6 @@ jobs:
         component: ${{ fromJSON(needs.get-vars.outputs.libs-list) }}
     with:
       component-dir: ${{ matrix.component }}
-      ref: ${{ needs.get-vars.outputs.checkout_ref }}
 
   component-workflow:
     name: Component workflow
@@ -214,7 +213,6 @@ jobs:
     with:
       build_version: ${{ needs.get-vars.outputs.build_version }}
       publish_binaries: ${{ fromJSON(needs.get-vars.outputs.publish_binaries) }} # fromJSON is required to cast string to boolean
-      ref: ${{ needs.get-vars.outputs.checkout_ref }}
 
   package-distribution-workflow:
     name: Build platform distribution binaries
