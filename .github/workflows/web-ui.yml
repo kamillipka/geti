@@ -11,10 +11,6 @@ on:
         description: "Enable publishing binaries to repos"
         type: boolean
         default: false
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        type: string
-        default: ""
     secrets:
       AWS_ROLE:
         required: true
@@ -41,7 +37,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         id: setup-node
@@ -80,7 +76,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         id: setup-node
@@ -126,7 +122,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         id: setup-node
@@ -165,7 +161,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         id: setup-node
@@ -214,7 +210,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         id: setup-node

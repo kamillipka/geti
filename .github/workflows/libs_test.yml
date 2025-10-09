@@ -7,16 +7,8 @@ on:
         description: "Dir in root directory"
         type: string
         required: true
-      ref:
-        description: "Ref to checkout"
-        type: string
-        default: ""
   workflow_dispatch:
     inputs:
-      ref:
-        description: "The branch, tag or SHA to checkout"
-        required: true
-        default: "main"
       component-dir:
         description: "Path to the component (relative to the root of the repository)"
         required: true
@@ -43,7 +35,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.sha }}
 
       - name: Install missing dependencies
         run: |
